@@ -1,0 +1,290 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 20% 97%;
+    --foreground: 20 14% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 14% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14% 10%;
+    --primary: 25 85% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 20% 93%;
+    --secondary-foreground: 20 14% 20%;
+    --muted: 30 15% 94%;
+    --muted-foreground: 20 10% 45%;
+    --accent: 30 60% 92%;
+    --accent-foreground: 25 85% 32%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 15% 87%;
+    --input: 30 15% 87%;
+    --ring: 25 85% 48%;
+    --radius: 0.625rem;
+    --sidebar-bg: 20 16% 12%;
+    --sidebar-fg: 30 20% 90%;
+    --sidebar-active: 25 85% 48%;
+    --animation-duration: 200ms;
+    --hero-glow-a: 25 85% 48%;
+    --hero-glow-b: 18 60% 20%;
+    --hero-surface-start: 35 70% 97%;
+    --hero-surface-mid: 0 0% 100%;
+    --hero-surface-end: 34 90% 96%;
+    --hero-panel: 20 18% 12%;
+    --hero-panel-foreground: 30 18% 82%;
+    --hero-chip-bg: 0 0% 100%;
+  }
+
+  :root[data-palette="cool"] {
+    --background: 196 78% 97%;
+    --foreground: 224 39% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 39% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 39% 12%;
+    --primary: 197 92% 54%;
+    --primary-foreground: 222 47% 14%;
+    --secondary: 199 56% 93%;
+    --secondary-foreground: 222 30% 24%;
+    --muted: 198 48% 94%;
+    --muted-foreground: 219 20% 43%;
+    --accent: 197 76% 90%;
+    --accent-foreground: 213 79% 30%;
+    --border: 198 30% 84%;
+    --input: 198 30% 84%;
+    --ring: 197 92% 54%;
+    --sidebar-bg: 201 55% 30%;
+    --sidebar-fg: 196 100% 90%;
+    --sidebar-active: 197 92% 54%;
+    --hero-glow-a: 197 92% 54%;
+    --hero-glow-b: 202 60% 28%;
+    --hero-surface-start: 194 83% 49%;
+    --hero-surface-mid: 194 86% 56%;
+    --hero-surface-end: 187 77% 51%;
+    --hero-panel: 222 42% 15%;
+    --hero-panel-foreground: 205 40% 80%;
+    --hero-chip-bg: 198 69% 60%;
+  }
+
+  .dark {
+    --background: 20 14% 8%;
+    --foreground: 30 20% 92%;
+    --card: 20 14% 11%;
+    --card-foreground: 30 20% 92%;
+    --popover: 20 14% 11%;
+    --popover-foreground: 30 20% 92%;
+    --primary: 25 85% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 20 14% 16%;
+    --secondary-foreground: 30 20% 90%;
+    --muted: 20 14% 16%;
+    --muted-foreground: 30 10% 58%;
+    --accent: 25 40% 22%;
+    --accent-foreground: 25 85% 65%;
+    --destructive: 0 62.8% 48%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 20 14% 20%;
+    --input: 20 14% 20%;
+    --ring: 25 85% 55%;
+    --sidebar-bg: 20 16% 6%;
+    --sidebar-fg: 30 20% 88%;
+    --sidebar-active: 25 85% 55%;
+    --hero-glow-a: 25 85% 55%;
+    --hero-glow-b: 20 20% 10%;
+    --hero-surface-start: 22 24% 14%;
+    --hero-surface-mid: 20 15% 11%;
+    --hero-surface-end: 18 26% 10%;
+    --hero-panel: 20 16% 8%;
+    --hero-panel-foreground: 30 15% 80%;
+    --hero-chip-bg: 20 14% 16%;
+  }
+
+  .dark[data-palette="cool"] {
+    --background: 224 39% 10%;
+    --foreground: 204 75% 95%;
+    --card: 222 38% 16%;
+    --card-foreground: 204 75% 95%;
+    --popover: 222 38% 16%;
+    --popover-foreground: 204 75% 95%;
+    --primary: 197 92% 54%;
+    --primary-foreground: 222 47% 14%;
+    --secondary: 222 33% 19%;
+    --secondary-foreground: 205 60% 88%;
+    --muted: 222 33% 19%;
+    --muted-foreground: 213 20% 66%;
+    --accent: 213 61% 20%;
+    --accent-foreground: 196 100% 72%;
+    --border: 221 33% 26%;
+    --input: 221 33% 26%;
+    --ring: 197 92% 54%;
+    --sidebar-bg: 224 39% 11%;
+    --sidebar-fg: 202 64% 88%;
+    --sidebar-active: 197 92% 54%;
+    --hero-glow-a: 197 92% 54%;
+    --hero-glow-b: 224 39% 12%;
+    --hero-surface-start: 222 42% 16%;
+    --hero-surface-mid: 223 39% 14%;
+    --hero-surface-end: 224 39% 12%;
+    --hero-panel: 224 39% 12%;
+    --hero-panel-foreground: 210 30% 76%;
+    --hero-chip-bg: 213 61% 20%;
+  }
+
+  .high-contrast {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 100%;
+    --primary: 40 100% 55%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 80%;
+    --border: 0 0% 30%;
+    --input: 0 0% 15%;
+    --ring: 40 100% 55%;
+    --sidebar-bg: 0 0% 0%;
+    --sidebar-fg: 0 0% 100%;
+    --sidebar-active: 40 100% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    line-height: 1.6;
+  }
+
+  .font-small {
+    font-size: 14px;
+  }
+  .font-medium {
+    font-size: 16px;
+  }
+  .font-large {
+    font-size: 18px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.25;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+}
+
+@layer utilities {
+  .sidebar-bg {
+    background-color: hsl(var(--sidebar-bg));
+    color: hsl(var(--sidebar-fg));
+  }
+  .text-sidebar-fg {
+    color: hsl(var(--sidebar-fg));
+  }
+  .text-sidebar-active {
+    color: hsl(var(--sidebar-active));
+  }
+  .bg-sidebar-active {
+    background-color: hsl(var(--sidebar-active));
+  }
+  .border-sidebar-active {
+    border-color: hsl(var(--sidebar-active));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Neurodiverse Support Mode — global CSS adaptations ─────────────────────
+ *
+ * These rules target the data-nd attribute set by AccessibilityProvider.
+ * They complement the React-level conditional rendering but handle aspects
+ * that are easier to express in CSS (spacing, typography, visual weight).
+ *
+ * Design rationale is documented inline with each rule set.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+/* LOW COGNITIVE LOAD
+ * Goal: reduce visual busyness so the user can focus on primary content.
+ * - Increase line height to improve reading flow (benefits all users).
+ * - Add extra letter spacing to body text (helps dyslexia, processing speed).
+ * - Increase card padding so content isn't crowded (reduces sensory overload).
+ * - Reduce opacity of decorative/muted elements so hierarchy is clearer.
+ */
+[data-nd="low_cognitive_load"] body {
+  line-height: 1.8;
+}
+[data-nd="low_cognitive_load"] p,
+[data-nd="low_cognitive_load"] li {
+  letter-spacing: 0.01em;
+}
+/* Widen card padding for breathing room — cognitive load reduces with whitespace */
+[data-nd="low_cognitive_load"] [data-slot="card-content"],
+[data-nd="low_cognitive_load"] .nd-card-content {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+/* Mute decorative borders slightly so content edges are dominant visual cue */
+[data-nd="low_cognitive_load"] .border-border {
+  border-color: hsl(var(--border) / 0.6);
+}
+
+/* STEP-BY-STEP MODE
+ * Goal: reduce visual noise; make progress-related elements more prominent.
+ * - Increase size and weight of progress indicators.
+ * - Add a subtle left border accent to "current step" items as a spatial anchor.
+ *   This helps users with poor working memory locate where they are.
+ */
+[data-nd="step_by_step"] body {
+  line-height: 1.75;
+}
+/* Highlight the active/focused region with a gentle background shift */
+[data-nd="step_by_step"] [data-step-current="true"] {
+  background-color: hsl(174 60% 50% / 0.06);
+  border-left: 3px solid hsl(174 60% 45%);
+  padding-left: calc(1rem - 3px);
+}
+
+/* MINIMAL TEXT MODE
+ * Goal: reduce the reading load at every opportunity.
+ * - Slightly reduce font size of secondary descriptive text (not headings).
+ *   This makes long descriptions visually lighter, signalling they're optional.
+ * - Increase icon size so icons carry more navigational weight.
+ * - Tighten spacing between navigation items so icons are the dominant element.
+ */
+[data-nd="minimal_text"] .text-muted-foreground {
+  font-size: 0.75rem;
+}
+/* Preserve readable size for short muted labels (badges, timestamps) */
+[data-nd="minimal_text"] .text-\[10px\],
+[data-nd="minimal_text"] .text-\[11px\] {
+  font-size: 0.7rem;
+}
+/* Slightly increase icon visual weight — icons become primary nav cue */
+[data-nd="minimal_text"] nav svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* SHARED: all neurodiverse modes improve focus ring visibility.
+ * Autistic and ADHD users may rely more on keyboard navigation; a clearer
+ * focus indicator reduces cognitive searching for the current focus position. */
+[data-nd] :focus-visible {
+  outline: 3px solid hsl(var(--ring));
+  outline-offset: 3px;
+  border-radius: 4px;
+}
