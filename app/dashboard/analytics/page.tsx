@@ -207,7 +207,7 @@ export default function AnalyticsPage() {
             Evaluation & Analytics
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Anonymised interaction metrics for dissertation usability assessment.
+            Your activity overview — interactions are anonymised and never shared.
           </p>
         </div>
 
@@ -531,9 +531,9 @@ export default function AnalyticsPage() {
                   client level to protect participant privacy.
                 </p>
                 <p>
-                  Research consent status affects whether anonymised aggregate patterns may appear in
-                  dissertation findings. Users who have not given consent are excluded from any
-                  group-level analysis in the written report.
+                  Your usage data helps us improve The Key. You control whether your anonymised
+                  activity contributes to platform analytics. You can withdraw consent at any time
+                  in your Data &amp; Privacy settings.
                 </p>
               </div>
               <div className="flex flex-wrap gap-2 pt-1">

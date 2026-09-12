@@ -32,7 +32,7 @@ const navItems = [
   { href: '/dashboard/analytics', icon: BarChart2, label: 'Analytics' },
   { href: '/dashboard/data', icon: Shield, label: 'Data & Privacy' },
   { href: '/ethics', icon: Scale, label: 'Ethics Statement' },
-  { href: '/survey-info', icon: ClipboardList, label: 'Research Survey' },
+  { href: '/pricing', icon: ClipboardList, label: 'Pricing' },
 ];
 
 interface SidebarProps {
@@ -77,7 +77,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
     Analytics: 'Stats',
     'Data & Privacy': 'Privacy',
     'Ethics Statement': 'Ethics',
-    'Research Survey': 'Survey',
+    'Pricing': 'Pricing',
   };
 
   return (
@@ -145,7 +145,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           ))}
 
           <p className="px-3 pt-4 pb-2 text-[10px] uppercase tracking-widest text-sidebar-fg/40 font-semibold">
-            {isMinimalText ? 'More' : 'Settings & Research'}
+            {isMinimalText ? 'More' : 'Settings & Info'}
           </p>
           {visibleSecondaryItems.map(({ href, icon: Icon, label }) => (
             <Link
@@ -176,9 +176,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
         <div className="px-4 py-4 border-t border-white/10">
           <div className="px-3 py-3 rounded-lg bg-white/5 border border-white/10">
-            <p className="text-xs font-medium text-sidebar-fg/90 mb-1">Prototype Build</p>
+            <p className="text-xs font-medium text-sidebar-fg/90 mb-1">The Key</p>
             <p className="text-[11px] text-sidebar-fg/50 leading-relaxed">
-              This is a research prototype built for a university dissertation.
+              AI career support for UK students.
             </p>
           </div>
         </div>

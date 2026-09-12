@@ -51,15 +51,33 @@ const aiCVItemSchema = z.object({
   order_index: z.number().optional().default(0),
 });
 
+const aiTargetApplicationSchema = z.object({
+  role_title: z.string().trim().max(150).optional().default(''),
+  company: z.string().trim().max(150).optional().default(''),
+  category: z.string().trim().max(80).optional().default(''),
+  location: z.string().trim().max(120).optional().default(''),
+  required_skills: z.array(z.string().trim().min(1).max(80)).optional().default([]),
+  description: z.string().trim().max(800).optional().default(''),
+}).optional();
+
 export const aiCVGenerateRequestSchema = z.object({
   profile: aiProfileSchema,
   cvItems: z.array(aiCVItemSchema).optional().default([]),
+  targetApplication: aiTargetApplicationSchema,
 });
 
 export const aiCVGenerateResponseSchema = z.object({
   content: z.string().min(1),
   prompt_used: z.string().min(1),
   model_used: z.string().min(1),
+  design: z.object({
+    template: z.string(),
+    fontFamily: z.string(),
+    accentColor: z.string(),
+    secondaryColor: z.string(),
+    layout: z.string(),
+    rationale: z.string(),
+  }).optional(),
 });
 
 export const interviewFeedbackRequestSchema = z.object({

@@ -23,6 +23,8 @@ import {
   RefreshCw,
   X,
   ChevronRight,
+  Sparkles,
+  CreditCard,
 } from 'lucide-react';
 
 const CONSENT_VERSION = '1.0';
@@ -141,6 +143,119 @@ function DataSection({ title, rowCount }: { title: string; rowCount: number | nu
         {rowCount === null ? '...' : `${rowCount} record${rowCount !== 1 ? 's' : ''}`}
       </span>
     </div>
+  );
+}
+
+function SubscriptionCard() {
+  const { session } = useAuth();
+  const { toast } = useToast();
+  const [plan, setPlan] = useState<string>('free');
+  const [loading, setLoading] = useState(false);
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  useEffect(() => {
+    if (!session) return;
+    supabase
+      .from('profiles')
+      .select('plan')
+      .eq('user_id', session.user.id)
+      .single()
+      .then(({ data }) => { if (data?.plan) setPlan(data.plan as string); });
+  }, [session]);
+
+  const handleUpgrade = async () => {
+    if (!session) return;
+    setLoading(true);
+    try {
+      const res = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        toast({ title: 'Could not start checkout', description: data.error ?? 'Please try again.', variant: 'destructive' });
+        return;
+      }
+      window.location.href = data.url;
+    } catch {
+      toast({ title: 'Something went wrong', description: 'Please try again.', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePortal = async () => {
+    if (!session) return;
+    setPortalLoading(true);
+    try {
+      const res = await fetch('/api/stripe/portal', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        toast({ title: 'Could not open portal', description: data.error ?? 'Please try again.', variant: 'destructive' });
+        return;
+      }
+      window.location.href = data.url;
+    } catch {
+      toast({ title: 'Something went wrong', description: 'Please try again.', variant: 'destructive' });
+    } finally {
+      setPortalLoading(false);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-2">
+          <CreditCard className="w-4 h-4 text-primary" />
+          <CardTitle className="text-base">Subscription</CardTitle>
+        </div>
+        <CardDescription>
+          Manage your plan and billing.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center justify-between gap-4 py-1">
+          <div className="space-y-1">
+            <p className="text-sm font-medium">
+              Current plan:{' '}
+              <span className={`font-semibold ${plan === 'pro' ? 'text-primary' : 'text-foreground'}`}>
+                {plan === 'pro' ? 'Pro' : plan === 'enterprise' ? 'Enterprise' : 'Free'}
+              </span>
+            </p>
+            {plan === 'free' && (
+              <p className="text-xs text-muted-foreground">
+                Upgrade to Pro for more AI CV generations and interview feedback each day.
+              </p>
+            )}
+          </div>
+          {plan === 'pro' || plan === 'enterprise' ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePortal}
+              disabled={portalLoading}
+              className="flex-shrink-0 gap-1.5"
+            >
+              {portalLoading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+              Manage subscription
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              onClick={handleUpgrade}
+              disabled={loading}
+              className="flex-shrink-0 gap-1.5"
+            >
+              {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+              Upgrade to Pro
+            </Button>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -362,30 +477,32 @@ export default function DataPrivacyPage() {
           Data & Privacy
         </h1>
         <p className="text-muted-foreground mt-1 text-sm">
-          Manage your research consent, export your data, and control your account.
+          Manage your privacy preferences, export your data, and control your account.
         </p>
       </div>
+
+      <SubscriptionCard />
 
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Scale className="w-4 h-4 text-primary" />
-            <CardTitle className="text-base">Research Consent</CardTitle>
+            <CardTitle className="text-base">Analytics Preferences</CardTitle>
           </div>
           <CardDescription>
-            Control whether your anonymised usage data may be included in this dissertation&apos;s research findings.
-            This does not affect your use of the platform.
+            Control whether your anonymised usage data contributes to platform analytics.
+            This does not affect your access to any features.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-start justify-between gap-4 py-2">
             <div className="space-y-1">
               <Label htmlFor="consent-toggle" className="text-sm font-medium">
-                Consent to research participation
+                Allow anonymised analytics
               </Label>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Allow anonymised, aggregated patterns from your platform usage to contribute to academic research findings.
-                No personally identifiable data is included in research outputs.
+                Allow anonymised, aggregated patterns from your activity to improve The Key.
+                No personally identifiable data is ever shared or sold.
               </p>
               {consentDate && (
                 <p className="text-[11px] text-muted-foreground">
@@ -421,8 +538,8 @@ export default function DataPrivacyPage() {
               )}
               <p className="text-xs leading-relaxed text-foreground/70">
                 {consent?.consented
-                  ? 'You have given research consent. Thank you for supporting this study. You can withdraw at any time by toggling this off.'
-                  : 'You have not given research consent. Your data will not be included in research analysis. You can change this at any time.'}
+                  ? 'Analytics enabled. Thank you for helping us improve The Key. You can withdraw at any time by toggling this off.'
+                  : 'Analytics disabled. Your data will not contribute to platform analytics. You can change this at any time.'}
               </p>
             </div>
           )}

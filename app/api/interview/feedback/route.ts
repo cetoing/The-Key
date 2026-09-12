@@ -5,7 +5,8 @@ import {
   interviewFeedbackRequestSchema,
   interviewFeedbackResponseSchema,
 } from '@/lib/validations';
-import { createSupabaseRouteClient } from '@/lib/supabase-admin';
+import { createSupabaseRouteClient, createSupabaseAdminClient } from '@/lib/supabase-admin';
+import { checkAiRateLimit, logAiUsage } from '@/lib/ai-rate-limit';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -32,6 +33,28 @@ export async function POST(req: NextRequest) {
 
     if (userError || !user) {
       return NextResponse.json({ error: 'Could not verify your session.' }, { status: 401 });
+    }
+
+    const adminClient = createSupabaseAdminClient();
+
+    const { data: profileData } = await adminClient
+      .from('profiles')
+      .select('plan')
+      .eq('user_id', user.id)
+      .single();
+
+    const plan = (profileData?.plan ?? 'free') as 'free' | 'pro' | 'enterprise';
+
+    const rateLimit = await checkAiRateLimit(adminClient, user.id, 'interview_feedback', plan);
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        {
+          error: `Interview feedback limit reached (${rateLimit.used}/${rateLimit.limit} today). Try again tomorrow.`,
+          upgradeUrl: rateLimit.upgradeUrl,
+        },
+        { status: 429 },
+      );
     }
 
     const body = await req.json();
@@ -79,6 +102,13 @@ Be encouraging but honest. Focus on actionable, specific feedback. Keep strength
       temperature: 0.6,
     });
 
+    await logAiUsage(adminClient, user.id, 'interview_feedback', {
+      model: 'gpt-4o-mini',
+      prompt_tokens: completion.usage?.prompt_tokens ?? 0,
+      completion_tokens: completion.usage?.completion_tokens ?? 0,
+      total_tokens: completion.usage?.total_tokens ?? 0,
+    });
+
     const raw = completion.choices[0]?.message?.content || '';
 
     let parsed: {
@@ -114,7 +144,10 @@ Be encouraging but honest. Focus on actionable, specific feedback. Keep strength
       );
     }
 
-    console.error('Interview feedback error:', error);
+    console.error('[interview/feedback] Unexpected error', {
+      errorMessage: error instanceof Error ? error.message : String(error),
+    });
+
     if (getErrorStatus(error) === 401) {
       return NextResponse.json(
         { error: 'AI service is not configured correctly.' },

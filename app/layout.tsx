@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { AccessibilityProvider } from '@/providers/AccessibilityProvider';
 import { Toaster } from '@/components/ui/toaster';
+import { CookieConsent } from '@/components/CookieConsent';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AuthProvider>
             {children}
             <Toaster />
+            <CookieConsent />
           </AuthProvider>
         </AccessibilityProvider>
       </body>

@@ -53,3 +53,6 @@ pnpm-debug.log*
 .cache/
 tmp/
 temp/
+
+# Claude Code local worktrees/metadata
+.claude/

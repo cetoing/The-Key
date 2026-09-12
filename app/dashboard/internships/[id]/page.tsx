@@ -445,7 +445,7 @@ export default function InternshipDetailPage() {
               Guided Application Preview
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              This demo shows how The Key will support students through an application. It prepares the role in your tracker as applied and highlights what to focus on.
+              The Key guides you through each step of the application process, from CV tailoring to tracking your submission.
             </p>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -485,7 +485,7 @@ export default function InternshipDetailPage() {
                 <div>
                   <p className="font-medium text-sm">Publish-ready direction</p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    The published version will open the employer application link or a partner form. For the demo, The Key records this as an applied internship and stores guidance notes in your tracker.
+                    Clicking Apply Now will open the employer&apos;s application page in a new tab and record this as an active application in your tracker.
                   </p>
                 </div>
               </div>

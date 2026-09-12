@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { supabase } from '@/lib/supabase';
-import type { Profile, CVItem, GeneratedCV } from '@/lib/types';
+import type { Profile, CVItem, GeneratedCV, Application } from '@/lib/types';
 import { fetchProfile } from '@/lib/profiles';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -26,8 +26,49 @@ import {
 } from 'lucide-react';
 import { AIExplainabilityPanel } from '@/components/ai/AIExplainabilityPanel';
 import { buildCVExplainability } from '@/lib/explainability';
+import internshipsData from '@/data/internships.json';
+import type { Internship } from '@/lib/types';
 
-function buildDownloadMarkup(content: string) {
+interface CVDesign {
+  template: string;
+  fontFamily: string;
+  accentColor: string;
+  secondaryColor: string;
+  layout: string;
+  rationale: string;
+}
+
+const defaultDesign: CVDesign = {
+  template: 'balanced-professional',
+  fontFamily: 'Aptos, Calibri, Arial, sans-serif',
+  accentColor: '#c2410c',
+  secondaryColor: '#fff7ed',
+  layout: 'Balanced one-page CV with clear summary, education, experience, skills, and achievements.',
+  rationale: 'A balanced layout is suitable when no specific application is selected.',
+};
+
+const internships = internshipsData as Internship[];
+
+function getApplicationTarget(application?: Application) {
+  if (!application) return undefined;
+
+  const internship = internships.find((item) => item.id === application.internship_id);
+
+  return {
+    role_title: application.internship_title,
+    company: application.company,
+    category: internship?.type || '',
+    location: internship?.location || '',
+    required_skills: internship?.skills_required || [],
+    description: internship?.description || application.notes || '',
+  };
+}
+
+function getSafeFileLabel(value: string) {
+  return value.trim().replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'the-key-cv';
+}
+
+function buildDownloadMarkup(content: string, design: CVDesign = defaultDesign) {
   const escaped = content
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -40,15 +81,19 @@ function buildDownloadMarkup(content: string) {
         <meta charset="utf-8" />
         <title>The Key CV</title>
       </head>
-      <body style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 1.5; padding: 32px; color: #111827;">
-        ${escaped}
+      <body style="font-family: ${design.fontFamily}; font-size: 11.5pt; line-height: 1.5; padding: 32px; color: #111827;">
+        <div style="border-top: 8px solid ${design.accentColor}; background: ${design.secondaryColor}; padding: 18px 22px; margin-bottom: 22px;">
+          <div style="font-size: 10pt; letter-spacing: 1px; text-transform: uppercase; color: ${design.accentColor}; font-weight: 700;">${design.template}</div>
+          <div style="font-size: 10pt; color: #374151; margin-top: 4px;">${design.layout}</div>
+        </div>
+        <div style="white-space: pre-wrap;">${escaped}</div>
       </body>
     </html>
   `;
 }
 
-function downloadCVDocument(content: string, fileLabel: string) {
-  const blob = new Blob([buildDownloadMarkup(content)], { type: 'application/msword' });
+function downloadCVDocument(content: string, fileLabel: string, design: CVDesign = defaultDesign) {
+  const blob = new Blob([buildDownloadMarkup(content, design)], { type: 'application/msword' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
@@ -61,6 +106,7 @@ function downloadCVDocument(content: string, fileLabel: string) {
 
 function GeneratedCVDisplay({
   content,
+  design,
   onRegenerate,
   onAccept,
   onDownload,
@@ -68,6 +114,7 @@ function GeneratedCVDisplay({
   saving,
 }: {
   content: string;
+  design: CVDesign;
   onRegenerate: () => void;
   onAccept: () => void;
   onDownload: () => void;
@@ -77,15 +124,21 @@ function GeneratedCVDisplay({
   return (
     <div className="space-y-4">
       <div className="bg-card border border-border rounded-xl overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-muted/30">
+        <div
+          className="flex flex-col gap-3 px-5 py-4 border-b border-border sm:flex-row sm:items-center sm:justify-between"
+          style={{ backgroundColor: design.secondaryColor }}
+        >
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-amber-400" />
-            <span className="text-sm font-medium text-foreground">AI Draft - review before accepting</span>
+            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: design.accentColor }} />
+            <div>
+              <span className="text-sm font-medium text-foreground">Application-specific AI draft</span>
+              <p className="text-xs text-muted-foreground">{design.layout}</p>
+            </div>
           </div>
-          <Badge variant="outline" className="text-xs">Draft</Badge>
+          <Badge variant="outline" className="text-xs bg-background/80">{design.template}</Badge>
         </div>
-        <div className="p-6">
-          <pre className="whitespace-pre-wrap font-mono text-xs text-foreground/80 leading-relaxed">
+        <div className="p-6" style={{ fontFamily: design.fontFamily }}>
+          <pre className="whitespace-pre-wrap text-sm text-foreground/85 leading-relaxed">
             {content}
           </pre>
         </div>
@@ -164,8 +217,11 @@ export default function AICVGeneratorPage() {
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [cvItems, setCVItems] = useState<CVItem[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [selectedApplicationId, setSelectedApplicationId] = useState('');
   const [acceptedCVs, setAcceptedCVs] = useState<GeneratedCV[]>([]);
   const [draftContent, setDraftContent] = useState('');
+  const [draftDesign, setDraftDesign] = useState<CVDesign>(defaultDesign);
   const [draftMetadata, setDraftMetadata] = useState<{ promptUsed: string; modelUsed: string } | null>(null);
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -177,13 +233,18 @@ export default function AICVGeneratorPage() {
       fetchProfile(user.id),
       supabase.from('cv_items').select('*').eq('user_id', user.id).order('order_index'),
       supabase.from('generated_cvs').select('*').eq('user_id', user.id).eq('status', 'accepted').order('created_at', { ascending: false }),
-    ]).then(([profileRes, itemsRes, cvsRes]) => {
+      supabase.from('applications').select('*').eq('user_id', user.id).order('updated_at', { ascending: false }),
+    ]).then(([profileRes, itemsRes, cvsRes, appsRes]) => {
       setProfile(profileRes as Profile | null);
       setCVItems((itemsRes.data as CVItem[]) || []);
       setAcceptedCVs((cvsRes.data as GeneratedCV[]) || []);
+      setApplications((appsRes.data as Application[]) || []);
       setLoaded(true);
     });
   }, [user]);
+
+  const selectedApplication = applications.find((app) => app.id === selectedApplicationId);
+  const selectedTargetApplication = getApplicationTarget(selectedApplication);
 
   const generate = async () => {
     if (!profile?.full_name) {
@@ -214,7 +275,11 @@ export default function AICVGeneratorPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ profile, cvItems }),
+        body: JSON.stringify({
+          profile,
+          cvItems,
+          targetApplication: selectedTargetApplication,
+        }),
       });
 
       const data = await res.json();
@@ -229,6 +294,7 @@ export default function AICVGeneratorPage() {
       }
 
       setDraftContent(data.content);
+      setDraftDesign(data.design || defaultDesign);
       setDraftMetadata({
         promptUsed: data.prompt_used,
         modelUsed: data.model_used,
@@ -274,12 +340,13 @@ export default function AICVGeneratorPage() {
     }
     setAcceptedCVs((prev) => [data as GeneratedCV, ...prev]);
     setDraftContent('');
+    setDraftDesign(defaultDesign);
     setDraftMetadata(null);
     toast({ title: 'CV saved', description: 'Your AI-generated CV has been saved successfully.' });
   };
 
   const profileComplete = profile?.full_name && profile?.course && profile?.university;
-  const draftFileName = `${(profile?.full_name || 'the-key-cv').trim().replace(/\s+/g, '-').toLowerCase()}-draft`;
+  const draftFileName = `${getSafeFileLabel(profile?.full_name || 'the-key-cv')}-draft`;
 
   if (!loaded) {
     return (
@@ -319,10 +386,47 @@ export default function AICVGeneratorPage() {
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Generate Your CV</CardTitle>
           <CardDescription>
-            The AI will use your profile and {cvItems.length} CV {cvItems.length === 1 ? 'entry' : 'entries'} to create a personalised draft.
+            The AI will use your profile, {cvItems.length} CV {cvItems.length === 1 ? 'entry' : 'entries'}, and the selected application to create a personalised draft.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="target-application" className="text-sm font-medium text-foreground">
+              Target application
+            </label>
+            <select
+              id="target-application"
+              value={selectedApplicationId}
+              onChange={(event) => setSelectedApplicationId(event.target.value)}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            >
+              <option value="">General internship CV</option>
+              {applications.map((application) => (
+                <option key={application.id} value={application.id}>
+                  {application.internship_title} at {application.company}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-muted-foreground">
+              Selecting an application changes the writing focus, section order, colour accent, and document style.
+            </p>
+            {selectedTargetApplication && (
+              <div className="rounded-lg border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+                <p className="font-medium text-foreground">
+                  Tailoring for {selectedTargetApplication.role_title} at {selectedTargetApplication.company}
+                </p>
+                <p className="mt-1">
+                  Sector: {selectedTargetApplication.category || 'General'} · Location: {selectedTargetApplication.location || 'Not specified'}
+                </p>
+                {selectedTargetApplication.required_skills.length > 0 && (
+                  <p className="mt-1">
+                    Required skills: {selectedTargetApplication.required_skills.join(', ')}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               { label: 'Name', value: profile?.full_name || '-', icon: User },
@@ -369,9 +473,10 @@ export default function AICVGeneratorPage() {
           </h2>
           <GeneratedCVDisplay
             content={draftContent}
+            design={draftDesign}
             onRegenerate={generate}
             onAccept={accept}
-            onDownload={() => downloadCVDocument(draftContent, draftFileName)}
+            onDownload={() => downloadCVDocument(draftContent, draftFileName, draftDesign)}
             loading={generating}
             saving={saving}
           />
@@ -391,7 +496,8 @@ export default function AICVGeneratorPage() {
                 cv={cv}
                 onDownload={() => downloadCVDocument(
                   cv.content,
-                  `${(profile?.full_name || 'the-key-cv').trim().replace(/\s+/g, '-').toLowerCase()}-${new Date(cv.created_at).toISOString().slice(0, 10)}`
+                  `${getSafeFileLabel(profile?.full_name || 'the-key-cv')}-${new Date(cv.created_at).toISOString().slice(0, 10)}`,
+                  defaultDesign
                 )}
               />
             ))}

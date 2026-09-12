@@ -86,7 +86,7 @@ export function AuthForm() {
         <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
           {mode === 'login'
             ? 'Sign in to continue building your CV, tracking applications, and preparing for interviews.'
-            : 'Create a secure account for this dissertation prototype and start exploring internships.'}
+            : 'Create a free account and start exploring internships, building your CV, and practising interviews.'}
         </p>
       </div>
 
@@ -254,10 +254,10 @@ export function AuthForm() {
             <div className="rounded-2xl border border-border/70 bg-muted/30 p-3">
               <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                 <FileText className="h-4 w-4 text-primary" />
-                Research context
+                Your data
               </div>
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                This platform is a university dissertation prototype rather than a commercial product.
+                Your data is handled in accordance with GDPR. You can export or delete it at any time.
               </p>
             </div>
           </div>
@@ -266,17 +266,24 @@ export function AuthForm() {
 
       <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
         <Link href="/ethics" className="transition-colors hover:text-foreground">
-          Ethics & Transparency
+          Ethics &amp; Transparency
         </Link>
         <span className="hidden text-border sm:inline">&bull;</span>
-        <Link href="/survey-info" className="transition-colors hover:text-foreground">
-          Research Survey
+        <Link href="/privacy" className="transition-colors hover:text-foreground">
+          Privacy Policy
+        </Link>
+        <span className="hidden text-border sm:inline">&bull;</span>
+        <Link href="/terms" className="transition-colors hover:text-foreground">
+          Terms of Service
         </Link>
       </div>
 
       <p className="mt-5 text-center text-xs leading-relaxed text-muted-foreground">
-        By continuing, you agree to the platform&apos;s privacy and research terms.
-        This prototype was built for a university dissertation.
+        By continuing, you agree to our{' '}
+        <Link href="/terms" className="underline underline-offset-2 hover:text-foreground">Terms of Service</Link>
+        {' '}and{' '}
+        <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">Privacy Policy</Link>.
+        Your data is handled in accordance with GDPR.
       </p>
     </div>
   );

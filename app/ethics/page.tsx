@@ -46,7 +46,7 @@ export default function EthicsPage() {
               <h1 className="text-3xl font-bold text-foreground">Ethics & Transparency</h1>
               <p className="text-muted-foreground mt-2 leading-relaxed max-w-2xl">
                 How The Key uses your data, what AI can and cannot do, and your rights as a
-                participant in this research study.
+                user of The Key.
               </p>
             </div>
           </div>
@@ -58,9 +58,13 @@ export default function EthicsPage() {
             <span className="flex items-center gap-1.5 bg-muted rounded-full px-3 py-1.5">
               <Eye className="w-3 h-3" />Last updated {LAST_UPDATED}
             </span>
-            <span className="flex items-center gap-1.5 bg-muted rounded-full px-3 py-1.5">
-              <BookOpen className="w-3 h-3" />Dissertation research prototype
-            </span>
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-border/70 bg-muted/30 px-5 py-4 text-sm text-muted-foreground leading-relaxed">
+            This page explains our approach to AI and data. For our formal legal policies, see our{' '}
+            <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
+            {' '}and{' '}
+            <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link>.
           </div>
         </div>
 
@@ -99,13 +103,12 @@ export default function EthicsPage() {
             </div>
             <div className="prose-custom space-y-3 text-sm text-foreground/80 leading-relaxed">
               <p>
-                <strong className="text-foreground">The Key</strong> is a research prototype built as part of a university
-                dissertation investigating how AI-powered career tools can better support neurodiverse students
-                and those with accessibility needs in UK higher education.
+                <strong className="text-foreground">The Key</strong> is an AI-powered career support platform
+                designed to help neurodiverse students and those with accessibility needs in UK higher education
+                find internships, build CVs, and practise interviews.
               </p>
               <p>
-                This platform is <strong className="text-foreground">not a commercial product</strong>. It exists solely
-                for academic research purposes. No data is sold, shared with third parties for commercial use,
+                No data is sold, shared with third parties for commercial use,
                 or used for advertising.
               </p>
               <div className="rounded-xl bg-blue-500/5 border border-blue-500/20 p-4">
@@ -116,7 +119,7 @@ export default function EthicsPage() {
                     'Matches your skills to internship listings',
                     'Provides AI-powered interview practice with feedback',
                     'Tracks your internship applications in one place',
-                    'Collects anonymised usage data to support dissertation research findings',
+                    'Collects anonymised usage data to improve the platform (you can opt out)',
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2 text-xs text-blue-800/80 dark:text-blue-200/80">
                       <CheckCircle2 className="w-3.5 h-3.5 text-blue-500 flex-shrink-0 mt-0.5" />
@@ -310,9 +313,9 @@ export default function EthicsPage() {
             </div>
             <div className="space-y-4 text-sm text-foreground/80 leading-relaxed">
               <p>
-                Participation in this research study is entirely voluntary. Creating an account implies acceptance
-                of these terms, but research participation (including the optional survey) is a separate consent
-                decision you can make independently.
+                Use of The Key is entirely voluntary. Creating an account implies acceptance
+                of our Terms of Service. Analytics consent is a separate decision you can make independently
+                and can be changed at any time from Settings &gt; Data &amp; Privacy.
               </p>
               <div className="rounded-xl border border-border bg-card overflow-hidden">
                 <div className="bg-muted/50 px-4 py-3 border-b border-border">

@@ -78,11 +78,17 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="hidden items-center gap-4 text-sm text-muted-foreground sm:flex">
+                <Link href="/pricing" className="transition-colors hover:text-foreground">
+                  Pricing
+                </Link>
                 <Link href="/ethics" className="transition-colors hover:text-foreground">
                   Ethics
                 </Link>
-                <Link href="/survey-info" className="transition-colors hover:text-foreground">
-                  Survey
+                <Link href="/terms" className="transition-colors hover:text-foreground">
+                  Terms
+                </Link>
+                <Link href="/privacy" className="transition-colors hover:text-foreground">
+                  Privacy
                 </Link>
               </div>
             </div>
@@ -90,7 +96,7 @@ export default function HomePage() {
             <div className="mt-12 max-w-xl sm:mt-16">
               <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
                 <Shield className="h-3.5 w-3.5" />
-                Dissertation prototype for inclusive internship support
+                AI career support for UK university students
               </div>
               <h1 className="mt-5 text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl">
                 A calmer way for students to prepare for internships.
@@ -103,17 +109,17 @@ export default function HomePage() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/ethics"
+                href="/pricing"
                 className="inline-flex items-center gap-2 rounded-full border border-border bg-background/90 px-4 py-2 text-sm font-medium transition-colors hover:border-primary/30 hover:text-primary"
               >
-                Read ethics statement
+                View pricing
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                href="/survey-info"
+                href="/ethics"
                 className="inline-flex items-center gap-2 rounded-full border border-border/70 px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
               >
-                View research survey
+                Our approach to AI &amp; ethics
               </Link>
             </div>
 
@@ -151,7 +157,10 @@ export default function HomePage() {
             </div>
 
             <p className="mt-8 text-xs leading-relaxed text-muted-foreground">
-              Designed as a research prototype for a university dissertation on inclusive, explainable career technology.
+              By signing up you agree to our{' '}
+              <Link href="/terms" className="underline underline-offset-2 hover:text-foreground">Terms of Service</Link>
+              {' '}and{' '}
+              <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">Privacy Policy</Link>.
             </p>
           </div>
         </section>

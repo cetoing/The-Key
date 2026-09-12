@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
 
     console.error('Account deletion error:', error);
     return NextResponse.json(
-      { error: 'Failed to delete account. Please try again or contact the researcher if the problem continues.' },
+      { error: 'Failed to delete account. Please try again or contact support if the problem continues.' },
       { status: 500 },
     );
   }
